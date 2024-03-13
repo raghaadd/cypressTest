@@ -1,3 +1,111 @@
+/// <reference types="Cypress" />
+/// <reference types="cypress-iframe" />
+import 'cypress-iframe'
+
+describe('Gifiti website',function(){
+    before(function(){
+        cy.fixture('example').then(function(data){
+            this.data=data;
+            cy.log(data);
+        })
+        })
+    it('gifiti website',function(){
+        cy.visit("https://giftit-ng-ui-qa.progifts.io/catalog");
+        //type card name
+        cy.get('.catalog-search').type("Adidas");
+        //click on search button
+        cy.get('.catalog-search > button').click();
+
+        //click on the card when it loaded
+        cy.contains('app-store-item', 'Adidas').should('be.visible').click();       
+
+        cy.get('.nominations').children().each(($el, index)=>{
+            cy.log($el.text());
+            if ($el.text().trim() === '$200'){
+                cy.wrap($el).click();
+                return false;
+            }
+        });
+        cy.get('.continue').click();
+
+        //choose "Multiple recipients" interface
+        cy.get('.form-switch').children().each(($el, index)=>{
+            cy.log($el.text());
+            if ($el.text().trim() === 'Multiple recipients'){
+                cy.wrap($el).click();
+                return false;
+            }
+        });
+
+        //click on "Multiple recipients" button
+        cy.get('.add-giftee').click();
+
+        //type first name:
+        cy.get('.ng-star-inserted > :nth-child(2) > .ng-pristine').type(this.data.RecipientName[0]);
+
+        //type first email:
+        cy.get(':nth-child(3) > .ng-pristine').type(this.data.RecipientEmail[0]);
+
+        //press enter:
+        cy.get('.ng-star-inserted > :nth-child(3) > .ng-dirty').type('{enter}');
+        //type second name:
+        cy.get('.ng-star-inserted > :nth-child(2) > .ng-pristine').type(this.data.RecipientName[1]);
+
+        //type second email:
+        cy.get(':nth-child(3) > .ng-pristine').type(this.data.RecipientEmail[1]);
+
+        //click on Apply button:
+        cy.get('header > #form-submit-btn').click().then(() => {
+            //click on Continue button:
+            cy.get('#form-submit-btn').click();
+        });
+        cy.wait(2000);
+        cy.get('#form-submit-btn').click();
+
+        //type your name:
+        cy.get('#gifterName').type(this.data.YourName);
+        //type your email:
+        cy.get('#gifterMail').type(this.data.YourEmail);
+
+        //click on Continue button:
+        cy.get('#form-submit-btn').click();
+
+    
+        cy.wait(4000);
+        //type card number:
+        cy.get('.checkout-form > :nth-child(1) > .stripe-input').within(() => {
+            // Assuming there's an input field for the card number, you can target it by its class or tag name
+            cy.get('iframe[name*="__privateStripeFrame"]').as('cardInput');
+          });
+          cy.get('@cardInput').type(this.data.cardNumber, { force: true });
+
+
+        //type name on card:
+        cy.get('#name').type(this.data.nameoncard)
+
+       
+
+        //type expiry date:
+        cy.get('.small-inputs > :nth-child(1) > .stripe-input').within(() => {
+            cy.get('iframe[name*="__privateStripeFrame"]').as('expirydate');;
+          });
+
+          cy.get('@expirydate').type(this.data.expiryDate, { force: true });
+
+        //type cvv field:
+        cy.get(':nth-child(2) > .stripe-input').within(() => {
+            cy.get('iframe[name*="__privateStripeFrame"]').as('cvvfield');;
+          });
+
+          cy.get('@cvvfield').type(this.data.CVCcode, { force: true });
+
+          //click on checkout button
+          cy.get('#form-submit-btn').click();
+    })
+
+})
+
+
 // describe('participationg test cases', function(){
 //     it('Navigating to the website', function(){
 //         cy.visit("https://rahulshettyacademy.com/seleniumPractise/#/")
@@ -151,114 +259,3 @@
 //})
 
 
-/// <reference types="Cypress" />
-/// <reference types="cypress-iframe" />
-import 'cypress-iframe'
-
-describe('Gifiti website',function(){
-    before(function(){
-        cy.fixture('example').then(function(data){
-            this.data=data;
-            cy.log(data);
-        })
-        })
-    it('gifiti website',function(){
-        cy.visit("https://giftit-ng-ui-qa.progifts.io/catalog");
-        //type card name
-        cy.get('.catalog-search').type("Adidas");
-        //click on search button
-        cy.get('.catalog-search > button').click();
-
-        //click on the card when it loaded
-        cy.contains('app-store-item', 'Adidas').should('be.visible').click();       
-
-        cy.get('.nominations').children().each(($el, index)=>{
-            cy.log($el.text());
-            if ($el.text().trim() === '$200'){
-                cy.wrap($el).click();
-                return false;
-            }
-        });
-        cy.get('.continue').click();
-
-        //choose "Multiple recipients" interface
-        cy.get('.form-switch').children().each(($el, index)=>{
-            cy.log($el.text());
-            if ($el.text().trim() === 'Multiple recipients'){
-                cy.wrap($el).click();
-                return false;
-            }
-        });
-
-        //click on "Multiple recipients" button
-        cy.get('.add-giftee').click();
-
-        //type first name:
-        cy.get('.ng-star-inserted > :nth-child(2) > .ng-pristine').type(this.data.RecipientName[0]);
-
-        //type first email:
-        cy.get(':nth-child(3) > .ng-pristine').type(this.data.RecipientEmail[0]);
-
-        //press enter:
-        cy.get('.ng-star-inserted > :nth-child(3) > .ng-dirty').type('{enter}');
-        //type second name:
-        cy.get('.ng-star-inserted > :nth-child(2) > .ng-pristine').type(this.data.RecipientName[1]);
-
-        //type second email:
-        cy.get(':nth-child(3) > .ng-pristine').type(this.data.RecipientEmail[1]);
-
-        //click on Apply button:
-        cy.get('header > #form-submit-btn').click().then(() => {
-            //click on Continue button:
-            cy.get('#form-submit-btn').click();
-        });
-
-        cy.get('#form-submit-btn').click();
-
-        //type your name:
-        cy.get('#gifterName').type(this.data.YourName);
-        //type your email:
-        cy.get('#gifterMail').type(this.data.YourEmail);
-
-        //click on Continue button:
-        cy.get('#form-submit-btn').click();
-
-    
-        cy.wait(4000);
-        //type card number:
-        cy.get('.checkout-form > :nth-child(1) > .stripe-input').within(() => {
-            // Assuming there's an input field for the card number, you can target it by its class or tag name
-            cy.get('iframe[name*="__privateStripeFrame"]').as('cardInput');
-          });
-          cy.get('@cardInput').type(this.data.cardNumber, { force: true });
-
-
-        //type name on card:
-        cy.get('#name').type(this.data.nameoncard)
-
-       
-
-        //type expiry date:
-        cy.get('.small-inputs > :nth-child(1) > .stripe-input').within(() => {
-            cy.get('iframe[name*="__privateStripeFrame"]').as('expirydate');;
-          });
-
-          cy.get('@expirydate').type(this.data.expiryDate, { force: true });
-
-        //type cvv field:
-        cy.get(':nth-child(2) > .stripe-input').within(() => {
-            cy.get('iframe[name*="__privateStripeFrame"]').as('cvvfield');;
-          });
-
-          cy.get('@cvvfield').type(this.data.CVCcode, { force: true });
-
-          //click on checkout button
-          cy.get('#form-submit-btn').click();
-
-
-
-
-
-    })
-
-})
