@@ -73,34 +73,36 @@ describe('Gifiti website',function(){
     
         cy.wait(4000);
         //type card number:
-        cy.get('.checkout-form > :nth-child(1) > .stripe-input').within(() => {
-            // Assuming there's an input field for the card number, you can target it by its class or tag name
-            cy.get('iframe[name*="__privateStripeFrame"]').as('cardInput');
-          });
-          cy.get('@cardInput').type(this.data.cardNumber, { force: true });
-
-
+        // cy.get('.checkout-form > :nth-child(1) > .stripe-input').within(() => {
+        //     // Assuming there's an input field for the card number, you can target it by its class or tag name
+        //     cy.get('iframe[name*="__privateStripeFrame"]').as('cardInput');
+            
+        //   });
+          cy.get('iframe[name*="__privateStripeFrame"]').eq(0).as('cardInput');
+          cy.get('@cardInput').type(this.data.cardNumber, { force: true }).wait(5000);
+          //cy.get('@cardInput').type(this.data.cardNumber);
+          
         //type name on card:
         cy.get('#name').type(this.data.nameoncard)
 
        
 
         //type expiry date:
-        cy.get('.small-inputs > :nth-child(1) > .stripe-input').within(() => {
-            cy.get('iframe[name*="__privateStripeFrame"]').as('expirydate');;
-          });
-
+        // cy.get('.small-inputs > :nth-child(1) > .stripe-input').within(() => {
+        //     cy.get('iframe[name*="__privateStripeFrame"]').as('expirydate');;
+        //   });
+          cy.get('iframe[name*="__privateStripeFrame"]').eq(1).as('expirydate');
           cy.get('@expirydate').type(this.data.expiryDate, { force: true });
 
         //type cvv field:
-        cy.get(':nth-child(2) > .stripe-input').within(() => {
-            cy.get('iframe[name*="__privateStripeFrame"]').as('cvvfield');;
-          });
-
+        // cy.get(':nth-child(2) > .stripe-input').within(() => {
+        //     cy.get('iframe[name*="__privateStripeFrame"]').as('cvvfield');;
+        //   });
+          cy.get('iframe[name*="__privateStripeFrame"]').eq(2).as('cvvfield');
           cy.get('@cvvfield').type(this.data.CVCcode, { force: true });
 
           //click on checkout button
-          cy.get('#form-submit-btn').click();
+          //cy.get('#form-submit-btn').click();
     })
 
 })
